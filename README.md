@@ -1,5 +1,7 @@
 # Javascript Dependency Injection Container
 
+[![Build Status](https://travis-ci.org/erzhtor/jsdicon.svg?branch=master)](https://travis-ci.org/erzhtor/jsdicon)
+
 ## API
 * `inject` - wrap your functions\classes where you want to inject parameters
     ```js
