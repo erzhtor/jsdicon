@@ -11,7 +11,9 @@ describe('Container', () => {
     it('should throw an error on non unique registrations', () => {
         expect.assertions(1);
         container.register('foo', {});
-        expect(() => container.register('foo', 'tada')).toThrow();
+        expect(() => container.registerFunc('foo', function foo() {
+            return 'tada'}
+        )).toThrow();
     })
 
     it('should throw an error on non existing type resolution request', () => {
@@ -29,7 +31,7 @@ describe('Container', () => {
         expect(resolvedFoo).toMatchObject(foo);
     })
 
-    it('should resolve class', () => {
+    it('should resolve class wth injected params', () => {
         expect.assertions(2);
         const TYPES = {
             foo: 'foo',
@@ -56,7 +58,7 @@ describe('Container', () => {
         expect(resolvedFoo.concat('&')).toBe('BAR&BAZ');
     })
 
-    it('should resolve function', () => {
+    it('should resolve function with injected params', () => {
         expect.assertions(2);
         const TYPES = {
             foo: 'foo',
@@ -65,20 +67,32 @@ describe('Container', () => {
         }
         const Foo = inject(TYPES.bar, TYPES.baz)(
             function Foo(bar, baz) {
-                this.bar = bar;
-                this.baz = baz;
-                this.concat = function (value) {
-                    return `${this.bar}${value}${this.baz}`;
-                }
+                return `${bar}&${baz}`;
             }
         )
 
         container.register(TYPES.bar, 'BAR');
-        container.register(TYPES.foo, Foo);
+        container.registerFunc(TYPES.foo, Foo);
         container.register(TYPES.baz, 'BAZ');
 
         const resolvedFoo = container.resolve(TYPES.foo);
-        expect(resolvedFoo).toBeInstanceOf(Foo);
-        expect(resolvedFoo.concat('&')).toBe('BAR&BAZ');
+        expect(typeof resolvedFoo).toBe('string');
+        expect(resolvedFoo).toBe('BAR&BAZ');
+    })
+
+    it('should resolve function WITHOUT injected params', () => {
+        expect.assertions(2);
+        const TYPES = {
+            foo: 'foo'
+        }
+
+        container.registerFunc(TYPES.foo, function () {
+            return 'bar'
+        });
+
+        const resolvedFoo = container.resolve(TYPES.foo);
+        console.log(resolvedFoo);
+        expect(typeof resolvedFoo).toBe('string');
+        expect(resolvedFoo).toBe('bar');
     })
 })
