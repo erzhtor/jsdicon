@@ -4,7 +4,8 @@
   "description": "Javascript Dependency Injection Container",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "build": "rimraf dist/ && babel ./src --out-dir dist/ --ignore *.spec.js --copy-files"
   },
   "keywords": [
     "vanilla",
@@ -16,5 +17,12 @@
     "container"
   ],
   "author": "Erzhan Torokulov",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-jest": "^22.4.3",
+    "babel-preset-es2015": "^6.24.1",
+    "jest": "^22.4.3",
+    "rimraf": "^2.6.2"
+  }
 }
