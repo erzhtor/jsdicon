@@ -8,16 +8,15 @@ export class Container {
 
     register(typeId, obj) {
         if (this.factories[typeId] || this.dependencies[typeId]) {
+            // TODO: custom errors with nice msg
             throw new Error(`Already registered "${typeId}"`);
         }
-        switch(typeof obj) {
-            case Function:
-                this.factories[typeId] = obj;
-                break;
-            default:
-                this.dependencies[typeId] =  obj;
-                break;
+        if (typeof obj === 'function') {
+            this.factories[typeId] = obj;
+            return;
         }
+
+        this.dependencies[typeId] = obj;
     }
 
     resolve(typeId) {
@@ -26,6 +25,7 @@ export class Container {
         }
         const factory = this.factories[typeId];
         if (!factory) {
+            // TODO: custom errors with nice msg
             throw new Error(`Can't resolve type "${typeId}"`);
         }
 
@@ -38,6 +38,6 @@ export class Container {
     _inject(factory) {
         const factoryDependencies = factory[Constants.__inject__] || [];
         const args = factoryDependencies.map(factoryDependency => this.resolve(factoryDependency));
-        return factory.apply(null, args);
+        return new factory(...args);
     }
 }
