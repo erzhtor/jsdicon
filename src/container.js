@@ -7,31 +7,43 @@ export class Container {
         this.functions = {};
     }
 
+    registerValue(typeId, value) {
+        this._assertNotExists(typeId);
+        this._assertDefined(value);
+
+        this.dependencies[typeId] = value;
+    }
+
     register(typeId, wrappedObj) {
         this._assertNotExists(typeId);
+        this._assertDefined(wrappedObj);
 
-        if (typeof wrappedObj === 'function') {
-            this.factories[typeId] = wrappedObj;
-            return;
+        if (typeof wrappedObj !== 'function') {
+            throw new Error(`Class or function expected for "${typeId}". Received ${typeof func}`);
         }
-
-        this.dependencies[typeId] = wrappedObj;
+        this.factories[typeId] = wrappedObj;
     }
 
     registerFunc(typeId, func) {
         this._assertNotExists(typeId);
+        this._assertDefined(func);
 
         if (typeof func !== 'function') {
-            // TODO: custom errors with nice msg
-            throw new Error(`Expected function. Received ${func}`);
+            throw new Error(`Function expected. Received ${typeof func}`);
         }
+
         this.functions[typeId] = func;
     }
 
     _assertNotExists(typeId) {
         if (this.factories[typeId] || this.dependencies[typeId]) {
-            // TODO: custom errors with nice msg
             throw new Error(`Already registered "${typeId}"`);
+        }
+    }
+
+    _assertDefined(value) {
+        if (!value) {
+            throw new Error(`Value for "${typeId}" should be defined. Received "${value}"`);
         }
     }
 
@@ -42,8 +54,7 @@ export class Container {
         const factory = this.factories[typeId];
         const func = this.functions[typeId];
         if (!factory && !func) {
-            // TODO: custom errors with nice msg
-            throw new Error(`Can't resolve type "${typeId}"`);
+            throw new Error(`"Can't resolve type "${typeId}". Possible not registered.`);
         }
 
         const dependency = this._inject(factory || func, !!func);
@@ -53,7 +64,7 @@ export class Container {
     }
 
     _inject(factory, isFunc = false) {
-        // throw Error on circular dependencies
+        //TODO: throw Error on circular dependencies
         const factoryDependencies = factory[Constants.__inject__] || [];
         const args = factoryDependencies.map(factoryDependency => this.resolve(factoryDependency));
         if (isFunc) {

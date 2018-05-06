@@ -10,15 +10,30 @@ describe('Container', () => {
 
     it('should throw an error on non unique registrations', () => {
         expect.assertions(1);
-        container.register('foo', {});
-        expect(() => container.registerFunc('foo', function foo() {
-            return 'tada'}
-        )).toThrow();
+        container.registerValue('foo', {});
+        expect(() => container.registerFunc('foo',
+            function foo() {
+                return 'tada'}
+            )
+        ).toThrow();
     })
 
-    it('should throw an error on non existing type resolution request', () => {
+    it('should throw an error when calling "resolve" on non existing type', () => {
         expect.assertions(1);
         expect(() => container.resolve('foo')).toThrow();
+    });
+
+    it('should throw an error when value is not defined', () => {
+        expect.assertions(3);
+        expect(() => container.register('foo')).toThrow();
+        expect(() => container.registerValue('bar')).toThrow();
+        expect(() => container.registerFunc('baz')).toThrow();
+    });
+
+    it('should throw an error when values are not correctly registered', () => {
+        expect.assertions(2);
+        expect(() => container.register('foo', {})).toThrow();
+        expect(() => container.registerFunc('baz', {})).toThrow();
     });
 
     it('should resolve object', () => {
@@ -26,7 +41,7 @@ describe('Container', () => {
         const foo = {
             bar: 'tadaa'
         };
-        container.register('foo', foo);
+        container.registerValue('foo', foo);
         const resolvedFoo = container.resolve('foo');
         expect(resolvedFoo).toMatchObject(foo);
     })
@@ -49,9 +64,9 @@ describe('Container', () => {
         }
         const Foo = inject(TYPES.bar, TYPES.baz)(_Foo)
 
-        container.register(TYPES.bar, 'BAR');
+        container.registerValue(TYPES.bar, 'BAR');
         container.register(TYPES.foo, Foo);
-        container.register(TYPES.baz, 'BAZ');
+        container.registerValue(TYPES.baz, 'BAZ');
 
         const resolvedFoo = container.resolve(TYPES.foo);
         expect(resolvedFoo).toBeInstanceOf(Foo);
@@ -71,9 +86,9 @@ describe('Container', () => {
             }
         )
 
-        container.register(TYPES.bar, 'BAR');
+        container.registerValue(TYPES.bar, 'BAR');
         container.registerFunc(TYPES.foo, Foo);
-        container.register(TYPES.baz, 'BAZ');
+        container.registerValue(TYPES.baz, 'BAZ');
 
         const resolvedFoo = container.resolve(TYPES.foo);
         expect(typeof resolvedFoo).toBe('string');
