@@ -1,0 +1,20 @@
+{
+  "name": "jsdicon",
+  "version": "0.1.0",
+  "description": "Javascript Dependency Injection Container",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vanilla",
+    "js",
+    "javascript",
+    "di",
+    "dependency",
+    "injection",
+    "container"
+  ],
+  "author": "Erzhan Torokulov",
+  "license": "ISC"
+}
