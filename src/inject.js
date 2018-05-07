@@ -6,10 +6,10 @@ export function inject(...typeIds) {
             if (!typeId) {
                 throw new Error(`Expected non falsy typeId. Provided "${typeId}"`);
             }
-            if (typeof typeId === 'string' || typeof typeId === 'number' || typeof typeId === 'symbol') {
+            if (typeof typeId === 'string' || typeof typeId === 'number') {
                 continue;
             }
-            throw new Error(`Expected "symbol" or "number" or "string". Received "${typeof typeId}"`);
+            throw new Error(`Expected "number" or "string". Received "${typeof typeId}"`);
         }
         if (typeof wrappedObject !== 'function') {
             throw new Error(`Expected function or class. Provided "${typeof wrappedObject}"`)

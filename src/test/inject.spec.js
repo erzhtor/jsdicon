@@ -31,7 +31,7 @@ describe('inject', () => {
         expect.assertions(1);
         expect(() => inject({})(
             class Bar{}
-        )).toThrow('Expected "symbol" or "number" or "string". Received "object"');
+        )).toThrow('Expected "number" or "string". Received "object"');
     })
 
     it('should throw an Error when passing empty string as typedId', () => {
@@ -48,10 +48,10 @@ describe('inject', () => {
         )).toThrow('Expected non falsy typeId. Provided "0"');
     })
 
-    it('should add special array property when wrapping class. Pass "1, \'One\', Symbol()" as typeIds', () => {
+    it('should add special array property when wrapping class. Pass "1, \'One\'" as typeIds', () => {
         expect.assertions(2);
 
-        const typeIds = [1, 'One', Symbol()];
+        const typeIds = [1, 'One'];
 
         const injectedBar = inject(...typeIds)(
             class Bar{}

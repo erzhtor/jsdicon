@@ -5,6 +5,7 @@ export class Container {
         this.dependencies = {};
         this.factories = {};
         this.functions = {};
+        this.injecting = {};
     }
 
     registerValue(typeId, value) {
@@ -48,13 +49,19 @@ export class Container {
             throw new Error(`Can't resolve type "${typeId}". Possibly not registered.`);
         }
 
+        if (this.injecting[typeId]) {
+            throw new Error(`Cannot resolve circular dependencies for "${typeId}"`);
+        }
+
+        this.injecting[typeId] = true;
+
         const dependency = this._inject(factory || func, !!func);
         this.dependencies[typeId] = this.dependency;
 
+        this.injecting[typeId] = false;
         return dependency;
     }
     _inject(factory, isFunc = false) {
-        // TODO: throw Error on circular dependencies
         const factoryDependencies = factory[Constants.__inject__] || [];
         const args = factoryDependencies.map(factoryDependency => this.resolve(factoryDependency));
         if (isFunc) {

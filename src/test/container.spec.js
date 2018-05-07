@@ -109,11 +109,11 @@ describe('Container', () => {
         expect(resolvedFoo).toBe('bar');
     })
 
-    it.skip('should throw an Error on circular dependencies', () => {
+    it('should throw an Error on circular dependencies', () => {
         expect.assertions(1);
         const TYPES = {
-            foo: Symbol(),
-            bar: Symbol()
+            foo: 'FOO',
+            bar: 'BAR'
         }
 
         container.register(TYPES.foo, inject(TYPES.bar)(
@@ -124,6 +124,7 @@ describe('Container', () => {
             function bar(foo) { }
         ));
 
-        expect(() => container.resolve(TYPES.foo)).toThrow("Cannot resolve circular dependency");
+        expect(() => container.resolve(TYPES.foo)).
+            toThrow(`Cannot resolve circular dependencies for "${TYPES.foo}"`);
     })
 })
