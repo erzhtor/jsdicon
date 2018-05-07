@@ -2,11 +2,11 @@ import { inject } from "../inject";
 import { Constants } from "../constants";
 
 describe('inject', () => {
-    it('should throw an Error when wrapping non function object', () => {
+    it('should throw an Error when wrapping an empty object', () => {
         expect.assertions(1);
         expect(() =>
             inject()({})
-        ).toThrow();
+        ).toThrow('Expected function or class. Provided "object"');
     })
 
     it('should add special array property when wrapping function. Empty typeIds', () => {
@@ -31,21 +31,21 @@ describe('inject', () => {
         expect.assertions(1);
         expect(() => inject({})(
             class Bar{}
-        )).toThrow();
+        )).toThrow('Expected "symbol" or "number" or "string". Received "object"');
     })
 
     it('should throw an Error when passing empty string as typedId', () => {
         expect.assertions(1);
         expect(() => inject('')(
             class Bar{}
-        )).toThrow();
+        )).toThrow('Expected non falsy typeId. Provided ""');
     })
 
     it('should throw an Error when passing "0" as typedId', () => {
         expect.assertions(1);
         expect(() => inject(0)(
             class Bar{}
-        )).toThrow();
+        )).toThrow('Expected non falsy typeId. Provided "0"');
     })
 
     it('should add special array property when wrapping class. Pass "1, \'One\', Symbol()" as typeIds', () => {

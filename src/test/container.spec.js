@@ -15,25 +15,24 @@ describe('Container', () => {
             function foo() {
                 return 'tada'}
             )
-        ).toThrow();
+        ).toThrow('Already registered "foo"');
     })
 
     it('should throw an Error when calling "resolve" on non existing typeId', () => {
         expect.assertions(1);
-        expect(() => container.resolve('foo')).toThrow();
+        expect(() => container.resolve('foo')).toThrow('Can\'t resolve type "foo". Possibly not registered.');
     });
 
-    it('should throw an Error when value is not defined', () => {
-        expect.assertions(3);
-        expect(() => container.register('foo')).toThrow();
-        expect(() => container.registerValue('bar')).toThrow();
-        expect(() => container.registerFunc('baz')).toThrow();
-    });
+    it('should throw an Error when registering "undefied", empty object or "null"', () => {
+        expect.assertions(6);
+        expect(() => container.register('foo')).toThrow('Class or function expected for "foo". Received "undefined"');
+        expect(() => container.registerFunc('baz')).toThrow('Function expected. Received "undefined"');
 
-    it('should throw an Error when registering object as class or function', () => {
-        expect.assertions(2);
-        expect(() => container.register('foo', {})).toThrow();
-        expect(() => container.registerFunc('baz', {})).toThrow();
+        expect(() => container.register('foo', null)).toThrow('Class or function expected for "foo". Received "object"');
+        expect(() => container.registerFunc('baz', null)).toThrow('Function expected. Received "object"');
+
+        expect(() => container.register('foo', {})).toThrow('Class or function expected for "foo". Received "object"');
+        expect(() => container.registerFunc('baz', {})).toThrow('Function expected. Received "object"');
     });
 
     it('should correctly resolve object', () => {
@@ -106,8 +105,25 @@ describe('Container', () => {
         });
 
         const resolvedFoo = container.resolve(TYPES.foo);
-        console.log(resolvedFoo);
         expect(typeof resolvedFoo).toBe('string');
         expect(resolvedFoo).toBe('bar');
+    })
+
+    it.skip('should throw an Error on circular dependencies', () => {
+        expect.assertions(1);
+        const TYPES = {
+            foo: Symbol(),
+            bar: Symbol()
+        }
+
+        container.register(TYPES.foo, inject(TYPES.bar)(
+            class Foo {}
+        ));
+
+        container.registerFunc(TYPES.bar, inject(TYPES.foo)(
+            function bar(foo) { }
+        ));
+
+        expect(() => container.resolve(TYPES.foo)).toThrow("Cannot resolve circular dependency");
     })
 })

@@ -8,42 +8,33 @@ export class Container {
     }
 
     registerValue(typeId, value) {
-        this._assertNotExists(typeId);
-        this._assertDefined(value);
+        this._assertUnique(typeId);
 
         this.dependencies[typeId] = value;
     }
 
     register(typeId, wrappedObj) {
-        this._assertNotExists(typeId);
-        this._assertDefined(wrappedObj);
+        this._assertUnique(typeId);
 
         if (typeof wrappedObj !== 'function') {
-            throw new Error(`Class or function expected for "${typeId}". Received ${typeof func}`);
+            throw new Error(`Class or function expected for "${typeId}". Received "${typeof wrappedObj}"`);
         }
         this.factories[typeId] = wrappedObj;
     }
 
     registerFunc(typeId, func) {
-        this._assertNotExists(typeId);
-        this._assertDefined(func);
+        this._assertUnique(typeId);
 
         if (typeof func !== 'function') {
-            throw new Error(`Function expected. Received ${typeof func}`);
+            throw new Error(`Function expected. Received "${typeof func}"`);
         }
 
         this.functions[typeId] = func;
     }
 
-    _assertNotExists(typeId) {
+    _assertUnique(typeId) {
         if (this.factories[typeId] || this.dependencies[typeId]) {
             throw new Error(`Already registered "${typeId}"`);
-        }
-    }
-
-    _assertDefined(value) {
-        if (!value) {
-            throw new Error(`Value for "${typeId}" should be defined. Received "${value}"`);
         }
     }
 
@@ -54,7 +45,7 @@ export class Container {
         const factory = this.factories[typeId];
         const func = this.functions[typeId];
         if (!factory && !func) {
-            throw new Error(`"Can't resolve type "${typeId}". Possible not registered.`);
+            throw new Error(`Can't resolve type "${typeId}". Possibly not registered.`);
         }
 
         const dependency = this._inject(factory || func, !!func);
@@ -62,7 +53,6 @@ export class Container {
 
         return dependency;
     }
-
     _inject(factory, isFunc = false) {
         // TODO: throw Error on circular dependencies
         const factoryDependencies = factory[Constants.__inject__] || [];

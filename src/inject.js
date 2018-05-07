@@ -4,17 +4,15 @@ export function inject(...typeIds) {
     return function (wrappedObject) {
         for (let typeId of typeIds) {
             if (!typeId) {
-                throw new Error(`Incorrect typeId ${typeId}. Must be non falsy value`);
+                throw new Error(`Expected non falsy typeId. Provided "${typeId}"`);
             }
             if (typeof typeId === 'string' || typeof typeId === 'number' || typeof typeId === 'symbol') {
                 continue;
             }
-            throw new Error(`Type identifier "${typeId}" `+
-                `must be typeof "symbol" or "number" or "string". Received "${typeof typeId}"`+
-                `Wrapped object ${wrappedObject}`);
+            throw new Error(`Expected "symbol" or "number" or "string". Received "${typeof typeId}"`);
         }
         if (typeof wrappedObject !== 'function') {
-            throw new Error(`Can't inject types to non function object. Provided ${wrappedObject}`)
+            throw new Error(`Expected function or class. Provided "${typeof wrappedObject}"`)
         }
         wrappedObject[Constants.__inject__] = typeIds || [];
         return wrappedObject;
