@@ -16,6 +16,10 @@
     "injection",
     "container"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erzhtor/jsdicon.git"
+  },
   "author": "Erzhan Torokulov",
   "license": "ISC",
   "devDependencies": {
