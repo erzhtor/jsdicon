@@ -64,7 +64,7 @@ export class Container {
     }
 
     _inject(factory, isFunc = false) {
-        //TODO: throw Error on circular dependencies
+        // TODO: throw Error on circular dependencies
         const factoryDependencies = factory[Constants.__inject__] || [];
         const args = factoryDependencies.map(factoryDependency => this.resolve(factoryDependency));
         if (isFunc) {

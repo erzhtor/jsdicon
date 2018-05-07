@@ -8,7 +8,7 @@ describe('Container', () => {
         container = new Container();
     })
 
-    it('should throw an error on non unique registrations', () => {
+    it('should throw an Error when registering with non unique typeIds', () => {
         expect.assertions(1);
         container.registerValue('foo', {});
         expect(() => container.registerFunc('foo',
@@ -18,25 +18,25 @@ describe('Container', () => {
         ).toThrow();
     })
 
-    it('should throw an error when calling "resolve" on non existing type', () => {
+    it('should throw an Error when calling "resolve" on non existing typeId', () => {
         expect.assertions(1);
         expect(() => container.resolve('foo')).toThrow();
     });
 
-    it('should throw an error when value is not defined', () => {
+    it('should throw an Error when value is not defined', () => {
         expect.assertions(3);
         expect(() => container.register('foo')).toThrow();
         expect(() => container.registerValue('bar')).toThrow();
         expect(() => container.registerFunc('baz')).toThrow();
     });
 
-    it('should throw an error when values are not correctly registered', () => {
+    it('should throw an Error when registering object as class or function', () => {
         expect.assertions(2);
         expect(() => container.register('foo', {})).toThrow();
         expect(() => container.registerFunc('baz', {})).toThrow();
     });
 
-    it('should resolve object', () => {
+    it('should correctly resolve object', () => {
         expect.assertions(1);
         const foo = {
             bar: 'tadaa'
@@ -46,7 +46,7 @@ describe('Container', () => {
         expect(resolvedFoo).toMatchObject(foo);
     })
 
-    it('should resolve class wth injected params', () => {
+    it('should resolve class with injected params', () => {
         expect.assertions(2);
         const TYPES = {
             foo: 'foo',
@@ -95,7 +95,7 @@ describe('Container', () => {
         expect(resolvedFoo).toBe('BAR&BAZ');
     })
 
-    it('should resolve function WITHOUT injected params', () => {
+    it('should resolve function without injected params', () => {
         expect.assertions(2);
         const TYPES = {
             foo: 'foo'
